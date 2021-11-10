@@ -23,4 +23,5 @@ include_directories( lib )
 #However, the file(GLOB...) allows for wildcard additions:
 file(GLOB SOURCES "src/*.cpp")
 
-add_executable(output src/auxiliar.cpp)
+add_executable(auxiliar src/auxiliar.cpp)
+add_executable(sequential src/sequential.cpp)

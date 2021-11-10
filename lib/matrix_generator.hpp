@@ -9,8 +9,7 @@
 
 #include <fstream>
 
-// Using short integers to minimize memory cost
-using usi = unsigned short int;
+using usi = unsigned int;
 
 class MatrixGenerator{
     

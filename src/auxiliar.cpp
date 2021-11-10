@@ -10,6 +10,8 @@ using namespace std;
 int main( int argc, char* argv[] ){
     // Matrix dimensions
     int lin1, col1, lin2, col2;
+    
+    srand(214);
 
     if ( argc < 5 ){
         cout << "Insufiscient number of arguments\n";

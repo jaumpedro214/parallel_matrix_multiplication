@@ -14,10 +14,8 @@ void MatrixGenerator::generate(){
     
     this->open_file();
 
-    // setting seed for reproducibility
-    srand(214);
-
-    for( usi i = 0, value ; i < this->nlin*this->ncol; i++){
+    this->matrix_file << this->nlin << " " << this->ncol << '\n';
+    for( unsigned int i = 0, value ; i < this->nlin*this->ncol; i++){
         // Generating random numbers in the [0-100] interval 
         value = (usi) (rand() % 101);
         this->matrix_file << value << '\n';
@@ -37,9 +35,10 @@ void MatrixGenerator::open_file(){
     // Matrix dimensions
     this->filename += std::to_string(this->nlin) +"x"+ std::to_string(this->ncol);
     
-    // unique file id
-    this->filename += "_"+std::to_string( rand() % 89999 + 10000 );
-
+    //unique(?) file id
+    //
+    this->filename += "_"+std::to_string( MatrixGenerator::matrix_count );
+    
     this->matrix_file.open( this->filename );
 }
 
