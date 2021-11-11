@@ -25,3 +25,4 @@ file(GLOB SOURCES "src/*.cpp")
 
 add_executable(auxiliar src/auxiliar.cpp)
 add_executable(sequential src/sequential.cpp)
+add_executable(process src/process.cpp)
