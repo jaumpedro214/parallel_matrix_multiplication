@@ -16,6 +16,7 @@
 
 #include <chrono>
 
+#define timemeasurement std::chrono::milliseconds
 
 class BaseClassMultiplier{
     
@@ -30,6 +31,7 @@ class BaseClassMultiplier{
     std::ofstream matrix_output;
 
     long int delta_time;
+    std::chrono::steady_clock::time_point begin;
 
     public:
     BaseClassMultiplier(char* file1, char* file2);
@@ -98,8 +100,7 @@ class MultithreadMultiplier: public BaseClassMultiplier{
     usi  calculate_position( unsigned int i, unsigned int j );
 
     void thread_multiply( usi m_start, usi m_end, usi id );
-    void thread_save_output_files( usi m_start, usi m_end, usi id, std::vector<usi> const &matrix3, int delta_time );
-    void thread_save();
+    void thread_save_output_files( usi m_start, usi m_end, usi id, std::vector<usi> const &matrix3, long int delta_time );
 
     public:
     MultithreadMultiplier(char* file1, char* file2, int p)

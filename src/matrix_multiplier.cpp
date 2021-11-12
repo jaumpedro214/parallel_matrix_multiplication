@@ -75,7 +75,8 @@ void SequentialMultiplier::read_matrices(){
 
 void SequentialMultiplier::multiply(){
     // Multiply the matrices
-    std::chrono::steady_clock::time_point begin = std::chrono::steady_clock::now(), end;
+    this->begin = std::chrono::steady_clock::now();
+    std::chrono::steady_clock::time_point end;
 
     std::cout << "Making the product between the matrices...\n";
 
@@ -86,7 +87,7 @@ void SequentialMultiplier::multiply(){
     }
 
     end = std::chrono::steady_clock::now();
-    this->delta_time = std::chrono::duration_cast<std::chrono::milliseconds>(end - begin).count();
+    this->delta_time = std::chrono::duration_cast<timemeasurement>(end - this->begin).count();
     
     std::cout << "Product complete.\n\n";
 }
@@ -201,6 +202,9 @@ void MultiprocessMultiplier::create_process(){
 
     //printf("Eu sou o pai (%d) e vou calcular os valores %4d %4d\n", this->id, this->m_start, this->m_end); 
 
+    // Setting time step before creating the new process
+    this->begin = std::chrono::steady_clock::now();
+
     // The father creates a total of process_number-1 sons
 
     for( usi i = 0; i<process_number-1 and pid !=0; i++ ){
@@ -231,7 +235,7 @@ void MultiprocessMultiplier::create_process(){
 
 void MultiprocessMultiplier::multiply(){
     // Multiply the matrices
-    std::chrono::steady_clock::time_point begin = std::chrono::steady_clock::now(), end;
+    std::chrono::steady_clock::time_point end;
 
     printf( "(%d) Calculating [%d %d) elements\n", this->id, this->m_start, this->m_end );
 
@@ -243,7 +247,7 @@ void MultiprocessMultiplier::multiply(){
     }
 
     end = std::chrono::steady_clock::now();
-    this->delta_time = std::chrono::duration_cast<std::chrono::milliseconds>(end - begin).count();
+    this->delta_time = std::chrono::duration_cast<timemeasurement>(end - this->begin).count();
     
     printf( "(%d) Complete\n", this->id );
 }
@@ -338,6 +342,10 @@ void MultithreadMultiplier::create_thread(){
     this->m_end = (usi) total%this->p>0? (usi) total%this->p: this->p;
     this->id = 0;
     
+    // Setting the initial time step
+    // right before creating the threads
+    this->begin = std::chrono::steady_clock::now();
+
     for( usi i = 0 ; i < thread_number-1; i++ ){
         this->m_start = this->m_end;
         this->m_end = this->m_start+this->p;
@@ -364,8 +372,8 @@ void MultithreadMultiplier::create_thread(){
 
 void MultithreadMultiplier::thread_multiply( usi m_start, usi m_end, usi id ){
     // Multiply the matrices
-    std::chrono::steady_clock::time_point begin = std::chrono::steady_clock::now(), end;
-    int delta_time;
+    std::chrono::steady_clock::time_point end;
+    long int delta_time;
     std::vector<usi> matrix3;
 
     printf( "(%d) Calculating [%d %d) elements\n", id, m_start, m_end );
@@ -378,7 +386,7 @@ void MultithreadMultiplier::thread_multiply( usi m_start, usi m_end, usi id ){
     }
 
     end = std::chrono::steady_clock::now();
-    delta_time = std::chrono::duration_cast<std::chrono::milliseconds>(end - begin).count();
+    delta_time = std::chrono::duration_cast<timemeasurement>(end - this->begin).count();
 
     printf( "(%d) Complete\n", id );
     this->thread_save_output_files( m_start, m_end, id, matrix3, delta_time );
@@ -395,7 +403,7 @@ usi MultithreadMultiplier::calculate_position( unsigned int i, unsigned int j ){
     return value;
 }
 
-void MultithreadMultiplier::thread_save_output_files( usi m_start, usi m_end, usi id, std::vector<usi> const &matrix3, int delta_time ){
+void MultithreadMultiplier::thread_save_output_files( usi m_start, usi m_end, usi id, std::vector<usi> const &matrix3, long int delta_time ){
     //Name for each file
     // prefix + dimentions (a x b) + process local id + unique random id
     std::string filename_output;
@@ -407,6 +415,7 @@ void MultithreadMultiplier::thread_save_output_files( usi m_start, usi m_end, us
 
     //unique file id    std::cout << "Saving...\n";
     filename_output += ( "_"+std::to_string( rand() % 89999 + 10000 ) );
+
     printf( "(%d) Saving results in %s\n", id, filename_output.c_str() );
     matrix_output.open( filename_output );
 
@@ -430,7 +439,4 @@ void MultithreadMultiplier::thread_save_output_files( usi m_start, usi m_end, us
     }
     matrix_output << delta_time <<"\n";
     matrix_output.close();
-}
-
-void MultithreadMultiplier::thread_save(  ){
 }
