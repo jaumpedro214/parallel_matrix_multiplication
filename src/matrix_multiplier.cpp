@@ -297,3 +297,140 @@ void MultiprocessMultiplier::save(){
 
     std::cout << "Process finished, closing the program.\n";
 }
+
+// MultithreadMultiplier
+void MultithreadMultiplier::run(){
+    // Run the process needed for the multiplication
+    this->open_input_files();
+    this->read_matrices();
+    this->create_thread();
+}
+
+void MultithreadMultiplier::read_matrices(){
+    // read the two matrices and store them into
+    // two separated vectors
+    usi value;
+    std::cout << "Reading the matrices from the files...\n";
+
+    for( unsigned int i = 0; i < this->nlin1*this->ncol1; i++ ){
+        this->matrix_file1 >> value;
+        this->matrix1.push_back( value );
+    }
+
+    for( unsigned int i = 0; i < this->nlin2*this->ncol2; i++ ){
+        this->matrix_file2 >> value;
+        this->matrix2.push_back( value );
+    }
+
+    this->matrix_file1.close();
+    this->matrix_file2.close();
+
+    std::cout << "Finish.\n\n";
+}
+
+void MultithreadMultiplier::create_thread(){
+    usi total = this->nlin3*this->ncol3;
+    usi thread_number = total/this->p + ( (usi) total%this->p>0 );
+    std::vector< std::thread > threads_vec;
+
+    // Separating each interval to a thread
+    this->m_start = 0;
+    this->m_end = (usi) total%this->p>0? (usi) total%this->p: this->p;
+    this->id = 0;
+    
+    for( usi i = 0 ; i < thread_number-1; i++ ){
+        this->m_start = this->m_end;
+        this->m_end = this->m_start+this->p;
+        this->id++;
+
+        threads_vec.push_back( std::thread( &MultithreadMultiplier::thread_multiply, 
+                                            this, this->m_start, this->m_end, this->id
+                                          ) 
+                              );
+    }
+
+    // Recalculating the main thread's values 
+    this->m_start = 0;
+    this->m_end = (usi) total%this->p>0? (usi) total%this->p: this->p;
+    this->id = 0;
+
+    this->thread_multiply( this->m_start, this->m_end, this->id );
+    
+    // Wait all the other threads finish
+    for( usi i = 0 ; i < thread_number-1; i++ ){
+        threads_vec[i].join();
+    }
+}
+
+void MultithreadMultiplier::thread_multiply( usi m_start, usi m_end, usi id ){
+    // Multiply the matrices
+    std::chrono::steady_clock::time_point begin = std::chrono::steady_clock::now(), end;
+    int delta_time;
+    std::vector<usi> matrix3;
+
+    printf( "(%d) Calculating [%d %d) elements\n", id, m_start, m_end );
+
+    for ( unsigned int i, j, k=m_start; k<m_end; k++ ){
+        // calculating the atual line and column
+        i = k/this->ncol3;
+        j = k%this->ncol3;
+        matrix3.push_back( this->calculate_position(i,j) );
+    }
+
+    end = std::chrono::steady_clock::now();
+    delta_time = std::chrono::duration_cast<std::chrono::milliseconds>(end - begin).count();
+
+    printf( "(%d) Complete\n", id );
+    this->thread_save_output_files( m_start, m_end, id, matrix3, delta_time );
+}
+
+usi MultithreadMultiplier::calculate_position( unsigned int i, unsigned int j ){
+    // Calculating matrix product using the flatten matrices
+    // recieve a line (i) and a column (j)
+    // and return the product
+    usi value = 0;
+    for( unsigned int k = 0; k < this->ncol1; k++ ){
+        value += this->matrix1[ i*this->ncol1 + k ]*this->matrix2[ j + k*this->ncol2 ];
+    }
+    return value;
+}
+
+void MultithreadMultiplier::thread_save_output_files( usi m_start, usi m_end, usi id, std::vector<usi> const &matrix3, int delta_time ){
+    //Name for each file
+    // prefix + dimentions (a x b) + process local id + unique random id
+    std::string filename_output;
+    std::ofstream matrix_output; 
+
+    filename_output = BaseClassMultiplier::result_dir+"matrix_result_thread_";
+    filename_output += ( std::to_string(this->nlin3) +"x"+ std::to_string(this->ncol3) );
+    filename_output += "_"+std::to_string(id);
+
+    //unique file id    std::cout << "Saving...\n";
+    filename_output += ( "_"+std::to_string( rand() % 89999 + 10000 ) );
+    printf( "(%d) Saving results in %s\n", id, filename_output.c_str() );
+    matrix_output.open( filename_output );
+
+    if (!matrix_output){
+        throw std::runtime_error("Could not create file: "+ filename_output);
+        return;
+    }
+
+    //Saving values in the file
+    printf( "(%d) Storing final results in: %s\n", id, filename_output.c_str() );
+    
+    matrix_output << this->nlin3 << " " << this->ncol3 << "\n";
+    
+    for ( unsigned int i, j, k=m_start; k<m_end; k++ ){
+        // calculating the atual line and column
+        i = k/this->ncol3;
+        j = k%this->ncol3;
+        matrix_output << "c"<<i<<j<<" ";
+        matrix_output << matrix3[ k-m_start ];
+        matrix_output << "\n";
+    }
+    matrix_output << delta_time <<"\n";
+    matrix_output.close();
+}
+
+void MultithreadMultiplier::thread_save(  ){
+}

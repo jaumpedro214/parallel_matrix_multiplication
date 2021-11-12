@@ -12,6 +12,8 @@
 
 #include <sys/shm.h> // Shared memmory
 
+#include <thread>
+
 #include <chrono>
 
 
@@ -63,12 +65,6 @@ class MultiprocessMultiplier: public BaseClassMultiplier{
     usi *matrix1, *matrix2;
     std::vector<usi> matrix3;
 
-    public:
-    MultiprocessMultiplier(char* file1, char* file2, int p)
-        :BaseClassMultiplier{ file1, file2 }, p{ p }
-        {;}
-
-    void run();
     void create_shared_memmory_space();
     void create_process();
     void read_matrices();
@@ -76,6 +72,41 @@ class MultiprocessMultiplier: public BaseClassMultiplier{
     void open_output_files();
     usi calculate_position( unsigned int i, unsigned int j );
     void save();
+
+    public:
+    MultiprocessMultiplier(char* file1, char* file2, int p)
+        :BaseClassMultiplier{ file1, file2 }, p{ p }
+        {;}
+
+    void run();
+
+};
+
+class MultithreadMultiplier: public BaseClassMultiplier{
+    using BaseClassMultiplier::BaseClassMultiplier;
+    
+    private:
+    int p;
+
+    usi m_start, m_end;
+    usi id; 
+    
+    std::vector<usi> matrix1, matrix2;
+
+    void read_matrices();
+    void create_thread();
+    usi  calculate_position( unsigned int i, unsigned int j );
+
+    void thread_multiply( usi m_start, usi m_end, usi id );
+    void thread_save_output_files( usi m_start, usi m_end, usi id, std::vector<usi> const &matrix3, int delta_time );
+    void thread_save();
+
+    public:
+    MultithreadMultiplier(char* file1, char* file2, int p)
+        :BaseClassMultiplier{ file1, file2 }, p{ p }
+        {;}
+
+    void run();
 
 };
 

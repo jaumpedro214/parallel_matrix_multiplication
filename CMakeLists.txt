@@ -12,7 +12,7 @@ set( EXECUTABLE_OUTPUT_PATH ${CMAKE_BINARY_DIR}/bin )
 
 #=== SETTING VARIABLES ===#
 # Compiling flags
-set( GCC_COMPILE_FLAGS "-Wall -fsanitize=address -g" )
+set( GCC_COMPILE_FLAGS "-Wall -fsanitize=address -g -pthread" )
 set( CMAKE_CXX_FLAGS  "${CMAKE_CXX_FLAGS} ${GCC_COMPILE_FLAGS} ${PREPROCESSING_FLAGS}" )
 
 #Include dir
@@ -26,3 +26,4 @@ file(GLOB SOURCES "src/*.cpp")
 add_executable(auxiliar src/auxiliar.cpp)
 add_executable(sequential src/sequential.cpp)
 add_executable(process src/process.cpp)
+add_executable(thread src/thread.cpp)
