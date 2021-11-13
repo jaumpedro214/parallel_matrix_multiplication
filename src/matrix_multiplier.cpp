@@ -108,7 +108,7 @@ void SequentialMultiplier::open_output_files(){
     this->filename_output += ( std::to_string(this->nlin3) +"x"+ std::to_string(this->ncol3) );
     
     //unique file id
-    this->filename_output += ( "_"+std::to_string( rand() % 89999 + 10000 ) );
+    //this->filename_output += ( "_"+std::to_string( rand() % 89999 + 10000 ) );
 
     this->matrix_output.open( this->filename_output );
 
@@ -271,7 +271,7 @@ void MultiprocessMultiplier::open_output_files(){
     this->filename_output += "_"+std::to_string(this->id);
 
     //unique file id
-    this->filename_output += ( "_"+std::to_string( rand() % 89999 + 10000 ) );
+    //this->filename_output += ( "_"+std::to_string( rand() % 89999 + 10000 ) );
 
     this->matrix_output.open( this->filename_output );
 
@@ -414,7 +414,7 @@ void MultithreadMultiplier::thread_save_output_files( usi m_start, usi m_end, us
     filename_output += "_"+std::to_string(id);
 
     //unique file id    std::cout << "Saving...\n";
-    filename_output += ( "_"+std::to_string( rand() % 89999 + 10000 ) );
+    //filename_output += ( "_"+std::to_string( rand() % 89999 + 10000 ) );
 
     printf( "(%d) Saving results in %s\n", id, filename_output.c_str() );
     matrix_output.open( filename_output );
