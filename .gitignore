@@ -1,3 +1,4 @@
 build/
 matrix/matrix_*
 result/matrix_*
+experiments/result*
