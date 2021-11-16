@@ -50,7 +50,7 @@ $ ./bin/auxiliar nlin1 ncol1 nlin2 ncol2
 ```
 
 They are the dimentions of two different matrices that will be created.
-The matrices are stored into the 📂 **matrix**, on the root directory, with the names: matrix_<nlin1>x<ncol1>_0 matrix_<nlin2>x<ncol2>_1
+The matrices are stored into the 📂 **matrix**, on the root directory, with the names: `matrix_<nlin1>x<ncol1>_0` `matrix_<nlin2>x<ncol2>_1`
   
 ### sequential
 The `sequential` program reads two matrices and makes the product of them.
@@ -62,11 +62,11 @@ $ ./bin/auxiliar matrix1 matrix2
 They are the names of the matrices to be multiplied.
 The matrices are readed from the  📂 **matrix** folder.
   
-The product result is stored in the 📂 **results** folder, with name: matrix_result_sequential_<nlin3>x<ncol3>
+The product result is stored in the 📂 **results** folder, with name: `matrix_result_sequential_<nlin3>x<ncol3>`.
 Where nlin3 and ncol3 are the result matrix dimentions.
   
 ### process and threads
-The `process` and the `threads` programs work the same way: they read the two matrices and also an integer p, which represents the number of elements in the final matrix that each of the process/threads should calculate.
+The `process` and the `threads` programs work the same way: they read the two matrices and also an integer *p*, which represents the number of elements in the final matrix that each of the process/threads should calculate.
 The number of process/threads is calculated in the execution.
   
 The program recives 3 arguments in command line:  
@@ -76,8 +76,8 @@ $ ./bin/<process or thread> matrix1 matrix2 p
 The matrices are readed from the  📂 **matrix** folder.
   
 The product result is stored in the 📂 **results** folder. 
-Each one of the process/threads creates its own result file, containing the elements that it's responsible for, with name: matrix_result_<process/threads>_<nlin3>x<ncol3>_<id>
-Where nlin3 and ncol3 are the result matrix dimentions, and <id> a number representing the process/threads that created the file.
+Each one of the process/threads creates its own result file, containing the elements that it's responsible for, with name: `matrix_result_<process/threads>_<nlin3>x<ncol3>_<id>`.
+Where nlin3 and ncol3 are the result matrix dimentions, and *id* a number representing the process/threads that created the file.
   
  
 ## The experiments
